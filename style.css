@@ -1,0 +1,73 @@
+body {
+    width: 250px;
+    height: 300px;
+    margin: auto;
+    text-align: center;
+}
+
+h1 {
+    color: #2f0c01;
+    background-color: #f3d3a9b8;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    position: center;
+    border: burlywood dotted;
+    padding: 5px;
+    font-size: 45px;
+}
+.container {
+    background-color: gray;
+    display: grid;
+    grid-template:
+        'output output output output'
+        '. . . .'
+        '. . . .'
+        '. . . .'
+        'zero zero . .'
+        'clear equals equals equals';
+}
+
+.button{
+    display: block;
+    width: 100%;
+    height: 50px;
+    font-size:25px;
+}
+
+#output {
+    text-align:center;
+    grid-area: output;
+    height: 60px;
+    font-size:40px;
+    margin: 2px;
+    color: red;
+    background-color: white;
+}
+
+#divZero {
+    grid-area: zero;
+}
+
+#divEquals {
+    grid-area: equals;
+}
+
+#divClear {
+    grid-area: clear;
+}
+
+#equals {
+    color:green;
+}
+
+#clear {
+    color:red;
+}
+
+#plus, #minus, #multiply, #divide {
+    color: blue;
+}
+
+
+
+
+
