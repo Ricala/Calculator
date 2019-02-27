@@ -4,7 +4,7 @@ let workingNumber = "";
 let savedNumber = "";
 let operand = "";
 let resetDisplay = false;
-let operationContinue = false;
+let continueCalc = false;
 
 //Attach listeners to buttons
 buttons.forEach((button) =>{
@@ -22,22 +22,23 @@ function updateDisplay(str) {
         let shortenedStr = "";
         for(let i = 0; i < 10; i++){
             shortenedStr += displayString.charAt(i);
-        }
+        };
         displayString = shortenedStr;
-    }
+    };
     if(resetDisplay && operand) {
         display.innerHTML = displayString + getOperand();
     } else {
         display.innerHTML = displayString;
-    }
-}
+    };
+};
 
 //check button input
 function checkInput(selection) {
-    if(resetDisplay) {
+    if(resetDisplay && operand && selection !== "delete") {
         resetDisplay = false;
         workingNumber = "";
-    }
+    };
+    
     switch (selection) {
         case "zero": 
             workingNumber += 0
@@ -46,7 +47,7 @@ function checkInput(selection) {
             workingNumber += 1
             break;
         case "two": 
-            workingNumber += 2;
+            workingNumber += 2
             break;
         case "three":
             workingNumber += 3
@@ -73,6 +74,9 @@ function checkInput(selection) {
             workingNumber += ".";
             disableDecimal(true);
             break;
+        case "delete":
+            deleteNumber();
+            break;
         case "plus":
         case "minus":
         case "multiply":
@@ -86,14 +90,14 @@ function checkInput(selection) {
             calculate();
             break;
         default:
-    }
-
-    //check if display needs to be reset
+    };
+    
+    //check if user display needs to be reset
     if(!resetDisplay){
         updateDisplay(workingNumber);
     } else {
         updateDisplay(savedNumber);
-    }
+    };
     
 };
 
@@ -101,27 +105,34 @@ function checkInput(selection) {
 function calculate() {
     savedNumber = parseFloat(savedNumber);
     workingNumber = parseFloat(workingNumber);
-    switch(operand){
-        case "plus":
-            savedNumber = savedNumber + workingNumber;
-            break;
-        case "minus":
-            savedNumber = savedNumber - workingNumber;
-            break;
-        case "multiply":
-            savedNumber = savedNumber * workingNumber;
-            break;
-        case "divide":
-            savedNumber = savedNumber / workingNumber;
-            break;
-        default:
+
+    //check if there are two numbers to calculate
+    if(!isNaN(savedNumber) && !isNaN(workingNumber)) {
+        switch(operand){
+            case "plus":
+                savedNumber = savedNumber + workingNumber;
+                break;
+            case "minus":
+                savedNumber = savedNumber - workingNumber;
+                break;
+            case "multiply":
+                savedNumber = savedNumber * workingNumber;
+                break;
+            case "divide":
+                savedNumber = savedNumber / workingNumber;
+                break;
+            default:
+        }
+        resetDisplay = true;
+        operand = "";
+        updateDisplay(savedNumber);
+        disableDecimal(false);
+        continueCalc = true;
+
+    } else {
+        clearAll();
     }
-    resetDisplay = true;
-    operand = "";
-    updateDisplay(savedNumber);
-    disableDecimal(false);
-    operationContinue = true;
-}
+};
 
 function clearAll() {
     workingNumber = "";
@@ -129,19 +140,33 @@ function clearAll() {
     operand = "";
     resetDisplay = false;
     disableDecimal(false);
-    operationContinue = false;
-}
+    continueCalc = false;
+};
 
 function setOperations(selection) {
     //check if operation is continuing after inital calculation
-    if(!operationContinue) {
-        console.log('fire');
-        savedNumber = workingNumber;}
+    if(savedNumber && workingNumber && selection) {
+        calculate();
+    }
+    //if this is first calculation, transfer work number to saved
+    if(!continueCalc) {
+        savedNumber = workingNumber;
+    }
     operand = selection;
     resetDisplay = true;
     disableDecimal(false);
+};
+
+//delete number
+function deleteNumber (){
+    if(workingNumber && operand) {
+        operand = "";
+    } else {
+        workingNumber = workingNumber.slice(0, -1);
+    }
 }
 
+//get operand for display
 function getOperand() {
     switch(operand) {
         case "plus":
@@ -154,14 +179,15 @@ function getOperand() {
             return "/";
         default:
 
-    }
-}
+    };
+};
 
+//toggle decimal button
 function disableDecimal(e){
     if(e){
         document.getElementById("decimal").disabled = true;
     } else {
 
         document.getElementById("decimal").disabled = false;
-    }
-}
+    };
+};
