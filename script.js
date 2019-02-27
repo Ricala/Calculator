@@ -4,28 +4,35 @@ let workingNumber = "";
 let savedNumber = "";
 let operand = "";
 let resetDisplay = false;
+let operationContinue = false;
 
+//Attach listeners to buttons
 buttons.forEach((button) =>{
     button.addEventListener('click',function(){
         checkInput(button.id);
         });
     });
 
+//Update user display
 function updateDisplay(str) {
     let displayString = str.toString();
-
+    
+    //Shorten number length if longer than 10
     if(displayString.length >= 11) {
-        console.log("entered if")
         let shortenedStr = "";
         for(let i = 0; i < 10; i++){
             shortenedStr += displayString.charAt(i);
-            console.log("new string addition");
         }
         displayString = shortenedStr;
     }
-    display.innerHTML = displayString;
+    if(resetDisplay && operand) {
+        display.innerHTML = displayString + getOperand();
+    } else {
+        display.innerHTML = displayString;
+    }
 }
 
+//check button input
 function checkInput(selection) {
     if(resetDisplay) {
         resetDisplay = false;
@@ -63,24 +70,25 @@ function checkInput(selection) {
             workingNumber += 9
             break;
         case "decimal":
-                workingNumber += ".";
+            workingNumber += ".";
+            disableDecimal(true);
             break;
         case "plus":
         case "minus":
         case "multiply":
         case "divide":
-            savedNumber = workingNumber;
-            operand = selection;
-            resetDisplay = true;
+            setOperations(selection)
             break;
         case "clear":
             clearAll();
             break;
         case "equals":
-            operate();
+            calculate();
             break;
         default:
     }
+
+    //check if display needs to be reset
     if(!resetDisplay){
         updateDisplay(workingNumber);
     } else {
@@ -89,7 +97,8 @@ function checkInput(selection) {
     
 };
 
-function operate() {
+//convert to float and operate
+function calculate() {
     savedNumber = parseFloat(savedNumber);
     workingNumber = parseFloat(workingNumber);
     switch(operand){
@@ -108,12 +117,51 @@ function operate() {
         default:
     }
     resetDisplay = true;
-
+    operand = "";
     updateDisplay(savedNumber);
+    disableDecimal(false);
+    operationContinue = true;
 }
 
 function clearAll() {
     workingNumber = "";
     savedNumber = "";
+    operand = "";
     resetDisplay = false;
+    disableDecimal(false);
+    operationContinue = false;
+}
+
+function setOperations(selection) {
+    //check if operation is continuing after inital calculation
+    if(!operationContinue) {
+        console.log('fire');
+        savedNumber = workingNumber;}
+    operand = selection;
+    resetDisplay = true;
+    disableDecimal(false);
+}
+
+function getOperand() {
+    switch(operand) {
+        case "plus":
+            return "+"
+        case "minus":
+            return "-";
+        case "multiply":
+            return "*";
+        case "divide":
+            return "/";
+        default:
+
+    }
+}
+
+function disableDecimal(e){
+    if(e){
+        document.getElementById("decimal").disabled = true;
+    } else {
+
+        document.getElementById("decimal").disabled = false;
+    }
 }
